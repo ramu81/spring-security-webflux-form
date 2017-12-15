@@ -33,6 +33,7 @@ import org.thymeleaf.templatemode.TemplateMode;
  */
 @Configuration
 public class ThymeleafConfig implements WebFluxConfigurer {
+
 	private ApplicationContext applicationContext;
 
 	public ThymeleafConfig(final ApplicationContext applicationContext) {
@@ -40,6 +41,28 @@ public class ThymeleafConfig implements WebFluxConfigurer {
 		this.applicationContext = applicationContext;
 	}
 
+	@Override
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.viewResolver(thymeleafChunkedAndDataDrivenViewResolver());
+	}
+
+	@Bean
+	public ThymeleafReactiveViewResolver thymeleafChunkedAndDataDrivenViewResolver() {
+		ThymeleafReactiveViewResolver viewResolver = new ThymeleafReactiveViewResolver();
+		viewResolver.setTemplateEngine(thymeleafTemplateEngine());
+		viewResolver.setOrder(1);
+		// OUTPUT BUFFER size limit
+		viewResolver.setResponseMaxChunkSizeBytes(8192);
+		return viewResolver;
+	}
+
+	@Bean
+	public ISpringWebFluxTemplateEngine thymeleafTemplateEngine() {
+		SpringWebFluxTemplateEngine templateEngine = new SpringWebFluxTemplateEngine();
+		templateEngine.setTemplateResolver(thymeleafTemplateResolver());
+		return templateEngine;
+	}
+	
 	@Bean
 	public SpringResourceTemplateResolver thymeleafTemplateResolver() {
 
@@ -54,25 +77,4 @@ public class ThymeleafConfig implements WebFluxConfigurer {
 
 	}
 
-	@Bean
-	public ISpringWebFluxTemplateEngine thymeleafTemplateEngine() {
-		SpringWebFluxTemplateEngine templateEngine = new SpringWebFluxTemplateEngine();
-		templateEngine.setTemplateResolver(thymeleafTemplateResolver());
-		return templateEngine;
-	}
-
-	@Bean
-	public ThymeleafReactiveViewResolver thymeleafChunkedAndDataDrivenViewResolver() {
-		ThymeleafReactiveViewResolver viewResolver = new ThymeleafReactiveViewResolver();
-		viewResolver.setTemplateEngine(thymeleafTemplateEngine());
-		viewResolver.setOrder(1);
-		// OUTPUT BUFFER size limit
-		viewResolver.setResponseMaxChunkSizeBytes(8192);
-		return viewResolver;
-	}
-
-	@Override
-	public void configureViewResolvers(ViewResolverRegistry registry) {
-		registry.viewResolver(thymeleafChunkedAndDataDrivenViewResolver());
-	}
 }
