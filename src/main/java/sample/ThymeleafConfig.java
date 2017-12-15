@@ -66,7 +66,8 @@ public class ThymeleafConfig implements WebFluxConfigurer {
 		ThymeleafReactiveViewResolver viewResolver = new ThymeleafReactiveViewResolver();
 		viewResolver.setTemplateEngine(thymeleafTemplateEngine());
 		viewResolver.setOrder(1);
-		viewResolver.setResponseMaxChunkSizeBytes(8192); // OUTPUT BUFFER size limit
+		// OUTPUT BUFFER size limit
+		viewResolver.setResponseMaxChunkSizeBytes(8192);
 		return viewResolver;
 	}
 
